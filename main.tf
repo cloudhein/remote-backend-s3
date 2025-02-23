@@ -1,3 +1,14 @@
+data "aws_vpc" "default_vpc" {
+  default = true
+}
+
+data "aws_subnets" "default_vpc_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default_vpc.id]
+  }
+}
+
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -18,9 +29,10 @@ resource "aws_instance" "web" {
   ami             = data.aws_ami.ubuntu.id
   instance_type   = "t3.micro"
   security_groups = [aws_security_group.allow_ssh.name]
+  subnet_id = data.aws_subnets.default_vpc_subnets.ids[1]  # ap-northeast-1a subnet in my usecase
 
   tags = {
-    Name = "web-server"
+    Name = var.instance_name
   }
 }
 
@@ -28,6 +40,7 @@ resource "aws_instance" "web" {
 resource "aws_security_group" "allow_ssh" {
   name        = "allow_ssh"
   description = "Allow SSH inbound traffic"
+  vpc_id = data.aws_vpc.default_vpc.id
 
   ingress {
     description = "SSH from anywhere"
