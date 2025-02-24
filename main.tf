@@ -27,12 +27,13 @@ data "aws_ami" "ubuntu" {
 
 resource "aws_instance" "web" {
   ami             = data.aws_ami.ubuntu.id
-  instance_type   = var.instance_type
+  instance_type   = var.instance_config.instance_type
   security_groups = [aws_security_group.allow_ssh.name]
-  subnet_id = data.aws_subnets.default_vpc_subnets.ids[1]  # ap-northeast-1a subnet in my usecase
+  subnet_id       = data.aws_subnets.default_vpc_subnets.ids[1] # ap-northeast-1a subnet in my usecase
 
   tags = {
-    Name = var.instance_name
+    Name        = var.instance_config.instance_name
+    Environment = var.instance_config.environment
   }
 }
 
@@ -40,7 +41,7 @@ resource "aws_instance" "web" {
 resource "aws_security_group" "allow_ssh" {
   name        = "allow_ssh"
   description = "Allow SSH inbound traffic"
-  vpc_id = data.aws_vpc.default_vpc.id
+  vpc_id      = data.aws_vpc.default_vpc.id
 
   ingress {
     description = "SSH from anywhere"
