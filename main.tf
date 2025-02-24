@@ -34,7 +34,7 @@ resource "aws_instance" "web" {
   subnet_id       = data.aws_subnets.default_vpc_subnets.ids[1] # ap-northeast-1a subnet in my usecase
 
   tags = {
-    Name        = var.instance_config.instance_name
+    Name        = "${var.instance_config.instance_name}-${count.index + 1}"
     Environment = var.instance_config.environment
   }
 }
