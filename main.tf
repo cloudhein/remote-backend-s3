@@ -1,3 +1,9 @@
+locals {
+  instance_type = var.instance_config.instance_type
+  instance_name = var.instance_config.instance_name
+  environment   = var.instance_config.environment
+}
+
 data "aws_vpc" "default_vpc" {
   default = true
 }
@@ -29,13 +35,13 @@ resource "aws_instance" "web" {
   count = var.create_instances ? var.instance_count : 0
 
   ami             = data.aws_ami.ubuntu.id
-  instance_type   = var.instance_config.instance_type
+  instance_type   = local.instance_type
   security_groups = [aws_security_group.allow_ssh.name]
-  subnet_id       = element(data.aws_subnets.default_vpc_subnets.ids, count.index)
+  subnet_id       = element(data.aws_subnets.default_vpc_subnets.ids, count.index) # create instances in different subnets
 
   tags = {
-    Name        = "${var.instance_config.instance_name}-${count.index + 1}"
-    Environment = var.instance_config.environment
+    Name        = "${local.instance_name}-${count.index + 1}"
+    Environment = local.environment
   }
 }
 
