@@ -27,3 +27,12 @@ variable "create_instances" {
   description = "Whether to create instances or not"
   default     = true
 }
+
+variable "instance_count" {
+  type        = number
+  description = "Number of instances to create"
+  validation {
+    condition     = var.instance_count > 0 && var.instance_count < 10
+    error_message = "The instance count should be between 1 and 10"
+  }
+}
