@@ -2,6 +2,12 @@ locals {
   instance_type = var.instance_config.instance_type
   instance_name = var.instance_config.instance_name
   environment   = var.instance_config.environment
+
+  anywhere            = "0.0.0.0/0"
+  ssh_port            = 22
+  all_protocols_ports = "-1"
+  tcp_protocol        = "tcp"
+  icmp_protocol       = "icmp"
 }
 
 data "aws_vpc" "default_vpc" {
@@ -34,10 +40,10 @@ data "aws_ami" "ubuntu" {
 resource "aws_instance" "web" {
   count = var.create_instances ? var.instance_count : 0
 
-  ami             = data.aws_ami.ubuntu.id
-  instance_type   = local.instance_type
-  security_groups = [aws_security_group.allow_ssh.name]
-  subnet_id       = element(data.aws_subnets.default_vpc_subnets.ids, count.index) # create instances in different subnets
+  ami                    = data.aws_ami.ubuntu.id
+  instance_type          = local.instance_type
+  vpc_security_group_ids = [aws_security_group.allow_ssh.id]
+  subnet_id              = element(data.aws_subnets.default_vpc_subnets.ids, count.index) # create instances in different subnets
 
   tags = {
     Name        = "${local.instance_name}-${count.index + 1}"
@@ -51,32 +57,31 @@ resource "aws_security_group" "allow_ssh" {
   description = "Allow SSH inbound traffic"
   vpc_id      = data.aws_vpc.default_vpc.id
 
-  ingress {
-    description = "SSH from anywhere"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # Ingress rule for ICMP (ping)
-  ingress {
-    description = "ICMP from anywhere"
-    from_port   = -1 # ICMP doesn’t use ports, -1 is used
-    to_port     = -1 # ICMP doesn’t use ports, -1 is used
-    protocol    = "icmp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1" # Allow all outbound traffic
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   tags = {
     Name = "allow_ssh"
   }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "allow_ssh_rules" {
+  security_group_id = aws_security_group.allow_ssh.id
+
+  cidr_ipv4   = local.anywhere
+  from_port   = local.ssh_port
+  ip_protocol = local.tcp_protocol
+  to_port     = local.ssh_port
+}
+
+resource "aws_vpc_security_group_ingress_rule" "allow_icmp_rules" {
+  security_group_id = aws_security_group.allow_ssh.id
+
+  cidr_ipv4   = local.anywhere
+  from_port   = local.all_protocols_ports
+  ip_protocol = local.icmp_protocol
+  to_port     = local.all_protocols_ports
+}
+
+resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
+  security_group_id = aws_security_group.allow_ssh.id
+  cidr_ipv4         = local.anywhere
+  ip_protocol       = local.all_protocols_ports # semantically equivalent to all ports
 }

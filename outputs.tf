@@ -10,3 +10,9 @@ output "subnet_ids" {
   sensitive   = false
 }
 
+output "public_ip" {
+  description = "Public IP addresses of the instances"
+  value       = aws_instance.web[*].public_ip
+  sensitive   = false
+}
+
