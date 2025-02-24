@@ -21,3 +21,9 @@ variable "instance_config" {
     error_message = "The allowed environments are dev and staging and prod"
   }
 }
+
+variable "create_instances" {
+  type        = bool
+  description = "Whether to create instances or not"
+  default     = true
+}
