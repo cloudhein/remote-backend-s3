@@ -16,3 +16,9 @@ output "public_ip" {
   sensitive   = false
 }
 
+output "db_endpoint" {
+  description = "Endpoint of the RDS database"
+  value       = aws_db_instance.postgresdb.endpoint
+  sensitive   = false
+}
+
