@@ -1,3 +1,15 @@
+variable "aws_region" {
+  type        = string
+  description = "The region of the AWS to provision the resources"
+  default     = "ap-northeast-1"
+}
+
+variable "profile" {
+  type        = string
+  description = "The profile to use"
+  default     = "terraform-dev-role"
+}
+
 variable "instance_config" {
   type = object({
     instance_name = string

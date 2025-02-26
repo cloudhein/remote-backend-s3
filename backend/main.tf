@@ -1,9 +1,9 @@
 resource "aws_s3_bucket" "s3_backend" {
-  bucket        = "remote-state-bucket-dev-001"
+  bucket        = var.s3_bucket_name
   force_destroy = false
 
   tags = {
-    Name        = "remote-state-bucket-dev-001"
+    Name        = var.s3_bucket_name
     Environment = "Dev"
   }
 }
