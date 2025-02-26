@@ -22,3 +22,14 @@ output "db_endpoint" {
   sensitive   = false
 }
 
+output "db_host" {
+  description = "Host of the RDS database"
+  value       = aws_db_instance.postgresdb.address
+  sensitive   = false
+}
+
+output "db_port" {
+  description = "Port of the RDS database"
+  value       = aws_db_instance.postgresdb.port
+  sensitive   = false
+}
