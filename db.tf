@@ -16,8 +16,8 @@ resource "aws_db_instance" "postgresdb" {
   publicly_accessible = true
   multi_az            = false
 
-  skip_final_snapshot      = true  # If true, no snapshot will be created
-  delete_automated_backups = true  # If true, automated backups will be deleted
+  skip_final_snapshot      = true # If true, no snapshot will be created
+  delete_automated_backups = true # If true, automated backups will be deleted
 
   vpc_security_group_ids = [aws_security_group.db_sg.id]
 }
