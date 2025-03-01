@@ -72,6 +72,7 @@ variable "rds_storage_type" {
 variable "rds_instance_class" {
   type        = string
   description = "The instance class of the RDS"
+  default     = "db.t3.micro"
   validation {
     condition     = contains(["db.t3.micro", "db.t4g.micro"], var.rds_instance_class)
     error_message = "The allowed RDS instance classes are db.t3.micro and db.t4g.micro"

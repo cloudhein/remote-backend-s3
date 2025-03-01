@@ -16,20 +16,14 @@ output "public_ip" {
   sensitive   = false
 }
 
-output "db_endpoint" {
-  description = "Endpoint of the RDS database"
-  value       = aws_db_instance.postgresdb.endpoint
-  sensitive   = false
-}
-
 output "db_host" {
-  description = "Host of the RDS database"
-  value       = aws_db_instance.postgresdb.address
+  description = "Host of the module RDS database"
+  value       = module.rds.db_host
   sensitive   = false
 }
 
-output "db_port" {
-  description = "Port of the RDS database"
-  value       = aws_db_instance.postgresdb.port
+output "db_endpoint" {
+  description = "Endpoint of the module RDS database"
+  value       = module.rds.db_endpoint
   sensitive   = false
 }

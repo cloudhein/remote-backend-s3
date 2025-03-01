@@ -10,4 +10,6 @@ locals {
   icmp_protocol       = "icmp"
 
   db_port = 5432
+
+  app_port = 8080
 }
