@@ -44,6 +44,8 @@ resource "aws_instance" "web" {
     db_host     = module.rds.db_host
     db_name     = var.rds_db_name
   })
+
+  user_data_replace_on_change = true
 }
 
 # Create a Security Group for EC2 instances
